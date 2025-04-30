@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Coffee } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 export default function HomePage() {
   const [topic, setTopic] = useState('');
