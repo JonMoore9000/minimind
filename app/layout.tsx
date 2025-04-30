@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { comfortaa, flower, ibmMono } from './fonts';
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,6 +27,7 @@ export default function RootLayout({
         
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
