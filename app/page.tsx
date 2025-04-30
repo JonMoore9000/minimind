@@ -3,11 +3,14 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, Coffee } from 'lucide-react';
 
 export default function HomePage() {
   const [topic, setTopic] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ kid: string; parent: string; fun: string } | null>(null);
+  const [thinkingMsg, setThinkingMsg] = useState("Thinking...");
+
 
   const handleExplain = async () => {
     if (!topic.trim()) return;
@@ -22,29 +25,67 @@ export default function HomePage() {
 
     const data = await res.json();
     setResult(data);
+    setThinkingMsg(getRandomMessage());
     setLoading(false);
   };
 
+  const thinkingMessages = [
+    "Consulting the goldfish",
+    "Calling Grandma",
+    "Googling like a genius",
+    "Reading the dictionary",
+    "Pacing in circles",
+    "Asking a librarian",
+    "Staring into space",
+    "Whispering to the wind",
+    "Rummaging through the attic",
+    "Tapping on the chalkboard",
+    "Building a brainstorm",
+    "Checking under the bed",
+    "Listening to old podcasts",
+    "Drawing diagrams in the air",
+    "Hopping between ideas",
+    "Double-checking everything",
+    "Taking a thinking walk",
+    "Rewinding the brain",
+    "Breaking out the big books",
+    "Connecting the imaginary dots",
+  ];
+  
+  
+  const getRandomMessage = () =>
+    thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
+
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center justify-center px-4 py-10">
-      <h1 className="text-4xl font-bold mb-6 text-center">MiniMind 🧠</h1>
-      <p className="mb-4 text-center text-lg">Explain anything like I&apos;m 5</p>
+      <h1 className="other-font text-4xl font-bold mb-6 text-center">MiniMind 🧠</h1>
+      <p className="mb-4 other-font text-center text-lg">Big questions, little answers.</p>
 
       <div className="w-full max-w-md">
         <input
           type="text"
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 text-white"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 text-white other-font focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
           placeholder="Ask anything... (e.g., What is a black hole?)"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleExplain(); }}
         />
-        <button
-          onClick={handleExplain}
-          className="mt-4 w-full py-2 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
-        >
-          {loading ? 'Thinking...' : 'Explain it'}
-        </button>
+        {loading ? (
+          <div className="flex justify-center other-font items-center gap-1 mt-4 font-sans text-white text-lg">
+            <span className="text-base sm:text-lg">{thinkingMsg}</span>
+            <span className="text-4xl gap-2 animate-bounce delay-[0ms]">.</span>
+            <span className="text-4xl gap-2 animate-bounce delay-[150ms]">.</span>
+            <span className="text-4xl gap-2 animate-bounce delay-[300ms]">.</span>
+          </div>
+        ) : (
+          <button
+            onClick={handleExplain}
+            className="mt-4 w-full py-2 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-800 text-white other-font hover:cursor-pointer text-lg transition duration-300"
+          >
+            Explain it
+          </button>
+        )}
+        
       </div>
 
       <AnimatePresence>
@@ -71,7 +112,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.3 }}
             >
-              <div className="p-4 font-sans rounded-lg bg-green-100 dark:bg-green-800">
+              <div className="p-4 other-font rounded-lg bg-green-100 dark:bg-green-800">
                 <h2 className="">👨‍👩 For Parents:</h2>
                 <p>{result.parent}</p>
               </div>
@@ -81,7 +122,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.3 }}
             >
-              <div className="p-4 font-mono rounded-lg bg-yellow-100 dark:bg-yellow-700">
+              <div className="p-4 other-font rounded-lg bg-yellow-100 dark:bg-yellow-700">
                 <h2 className="">💡 Fun Thought:</h2>
                 <p>{result.fun}</p>
               </div>
@@ -89,6 +130,8 @@ export default function HomePage() {
           </motion.div>
         )}
       </AnimatePresence>
+      <p className="jon">Built with <Heart size={20} className="mx-1 translate-y-0.5" /> by <a className="underline mx-1" href="https://x.com/JontheNerd_" target='_blank'> Jon</a></p>
+        <a className="kofi" href='https://ko-fi.com/Y8Y04MVLP' target='_blank'><img height='36' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6'  alt='Buy Me a Coffee at ko-fi.com' /></a>
     </main>
   );
 }
