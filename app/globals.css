@@ -47,3 +47,8 @@ p.jon {
   bottom: 30px;
   display: flex;
 }
+
+.logo {
+  width: 50px;
+  display: inline-block;
+}

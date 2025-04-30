@@ -58,7 +58,11 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center justify-center px-4 py-10">
-      <h1 className="other-font text-4xl font-bold mb-6 text-center">MiniMind 🧠</h1>
+      <div className="header mb-4 flex flex-wrap align-center items-center justify-center">
+      <img className="logo" src="../mmlogo.png" alt="" />
+      <h1 className="other-font text-4xl font-bold ml-1 text-center"> MiniMind</h1>
+      </div>
+      
       <p className="mb-4 other-font text-center text-lg">Big questions, little answers.</p>
 
       <div className="w-full max-w-md">
