@@ -9,7 +9,7 @@ export default function HomePage() {
   const [topic, setTopic] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ kid: string; parent: string; fun: string } | null>(null);
-  const [thinkingMsg, setThinkingMsg] = useState("Thinking...");
+  const [thinkingMsg, setThinkingMsg] = useState("Thinking");
 
 
   const handleExplain = async () => {
