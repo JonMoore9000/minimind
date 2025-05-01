@@ -135,7 +135,6 @@ export default function HomePage() {
         )}
       </AnimatePresence>
       <p className="jon">Built with <Heart size={20} className="mx-1 translate-y-0.5" /> by <a className="underline mx-1" href="https://x.com/JontheNerd_" target='_blank'> Jon</a></p>
-        <a className="kofi" href='https://ko-fi.com/Y8Y04MVLP' target='_blank'><img height='36' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6'  alt='Buy Me a Coffee at ko-fi.com' /></a>
     </main>
   );
 }
