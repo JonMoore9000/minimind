@@ -106,7 +106,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}
             >
-              <div className="p-4 kid-font rounded-lg bg-indigo-100 dark:bg-indigo-800">
+              <div className="p-4 kid-font rounded-lg bg-indigo-800">
                 <h2>🧒 For Kids:</h2>
                 <p>{result.kid}</p>
               </div>
@@ -116,7 +116,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.3 }}
             >
-              <div className="p-4 other-font rounded-lg bg-green-100 dark:bg-green-800">
+              <div className="p-4 other-font rounded-lg bg-green-800">
                 <h2 className="">👨‍👩 For Parents:</h2>
                 <p>{result.parent}</p>
               </div>
@@ -126,7 +126,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.3 }}
             >
-              <div className="p-4 other-font rounded-lg bg-yellow-100 dark:bg-yellow-700">
+              <div className="p-4 other-font rounded-lg bg-yellow-700">
                 <h2 className="">💡 Fun Thought:</h2>
                 <p>{result.fun}</p>
               </div>
