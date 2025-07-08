@@ -57,7 +57,7 @@ export default function HomePage() {
     thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center justify-center px-4 py-10">
+    <main className="min-h-screen bg-gray-900 text-gray-900 text-white flex flex-col items-center justify-center px-4 py-10">
       <div className="header mb-4 flex flex-wrap align-center items-center justify-center">
       <img className="logo" src="../mmlogo.png" alt="" />
       <h1 className="other-font text-4xl font-bold ml-1 text-center"> MiniMind</h1>
