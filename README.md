@@ -3,7 +3,6 @@
 **Big Questions, Little Answers.**  
 MiniMind is an AI-powered app designed to help kids and parents explore the world's most curious questions—together. Ask a big question, and get three fun, age-appropriate explanations: one for kids, one for parents, and one just for fun.
 
-![MiniMind Logo](public/mmlogo.png)
 ![MiniMind Website](https://minimind.fun)
 
 ---
