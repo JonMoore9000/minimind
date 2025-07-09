@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 MiniMind
 
-## Getting Started
+**Big Questions, Little Answers.**  
+MiniMind is an AI-powered app designed to help kids and parents explore the world's most curious questions—together. Ask a big question, and get three fun, age-appropriate explanations: one for kids, one for parents, and one just for fun.
 
-First, run the development server:
+![MiniMind Logo](public/mmlogo.png)
+![MiniMind Website](https://minimind.fun)
+
+---
+
+## ✨ Features
+
+- 🧒 **Kid-Friendly Answers**: Simplified explanations designed to spark curiosity and imagination.
+- 👨‍👩 **Parent Insights**: Deeper, contextual responses to support learning and conversation.
+- 💡 **Fun Thought**: A whimsical or thought-provoking twist for both generations to enjoy.
+- 💬 **AI-Powered**: Powered by OpenAI (or similar) to generate contextual, personalized content.
+- 🎨 **Delightful UI**: Built with Framer Motion for smooth animations and a playful, responsive design.
+- ⏳ **Dynamic Thinking Messages**: Fun, rotating "thinking" prompts while responses load.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- A running backend endpoint at `/api/explain` that accepts:
+  ```json
+  {
+    "topic": "string"
+  }
+  ```
+  And returns:
+  ```json
+  {
+    "kid": "string",
+    "parent": "string",
+    "fun": "string"
+  }
+  ```
+
+### Installation
 
 ```bash
+git clone https://github.com/yourusername/minimind.git
+cd minimind
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to start asking questions!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧩 Tech Stack
 
-## Learn More
+- **React + Next.js (App Router)**
+- **Tailwind CSS**
+- **Framer Motion** – for subtle animations
+- **Lucide Icons** – used for the heart icon
+- **Custom Fonts** – Kid- and parent-themed typography
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✍️ File Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+/app
+  /page.tsx         – Main UI logic
+/public
+  /mmlogo.png        – Logo used in header
+/api
+  /explain.ts        – (You provide) Serverless endpoint to handle AI logic
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 💡 Example Prompt
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **"What is a black hole?"**
+
+- 🧒 *For Kids*: "A black hole is like a space vacuum cleaner that even light can't escape from!"
+- 👨‍👩 *For Parents*: "A region of spacetime where gravity is so strong, not even light can escape—predicted by Einstein’s theory of relativity."
+- 💡 *Fun Thought*: "If you fell into a black hole, time might feel really weird... like slow motion forever!"
+
+---
+
+## 🧠 Why MiniMind?
+
+Because learning is more fun together. MiniMind bridges the gap between wonder and wisdom for kids and their grownups—one question at a time.
+
+---
+
+## 👤 Author
+
+Built with ❤️ by [Jon](https://x.com/JontheNerd_)
