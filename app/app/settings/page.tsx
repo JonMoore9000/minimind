@@ -162,11 +162,14 @@ export default function SettingsPage() {
     setEditingChild(child)
     setNewChildName(child.name)
     setNewChildAge(child.age?.toString() || '')
+
+    // Safely access favorites with type casting
+    const favorites = child.favorites as { animal?: string; color?: string; toy?: string; food?: string } || {}
     setNewChildFavorites({
-      animal: child.favorites.animal || '',
-      color: child.favorites.color || '',
-      toy: child.favorites.toy || '',
-      food: child.favorites.food || ''
+      animal: favorites.animal || '',
+      color: favorites.color || '',
+      toy: favorites.toy || '',
+      food: favorites.food || ''
     })
   }
 
@@ -271,7 +274,7 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-400 mt-1">
                       Favorites: {Object.entries(child.favorites)
                         .filter(([, value]) => value)
-                        .map(([key, value]) => `${key}: ${value}`)
+                        .map(([key, value]) => `${key}: ${String(value)}`)
                         .join(', ')}
                     </p>
                   )}
