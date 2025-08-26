@@ -103,34 +103,34 @@ export default function HomePage() {
     <main className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700 p-4">
-        <div className="max-w-4xl px-6 mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
-            <h1 className="text-xl font-bold">MiniMind</h1>
+        <div className="max-w-4xl px-2 sm:px-6 mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
+            <Image className="h-6 sm:h-8 w-auto flex-shrink-0" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
+            <h1 className="text-lg sm:text-xl font-bold truncate">MiniMind</h1>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Link href="/pricing" className="text-gray-300 hover:text-white transition">
+          <div className="flex items-center space-x-1 sm:space-x-4 flex-shrink-0">
+            <Link href="/pricing" className="hidden sm:block text-gray-300 hover:text-white transition">
               Pricing
             </Link>
             {user ? (
               <Link
                 href="/app"
-                className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium transition"
+                className="bg-indigo-600 hover:bg-indigo-700 px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base"
               >
                 Go to App
               </Link>
             ) : (
-              <div className="flex space-x-2">
+              <div className="flex space-x-1 sm:space-x-2">
                 <Link
                   href="/auth/login"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-lg transition"
+                  className="text-gray-300 hover:text-white px-2 sm:px-3 py-2 rounded-lg transition text-sm sm:text-base"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium transition"
+                  className="bg-indigo-600 hover:bg-indigo-700 px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base"
                 >
                   Get Started
                 </Link>
@@ -141,24 +141,24 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10">
 
         {/* Signup buttons section - in a box */}
         {!user && (
-          <div className="w-full max-w-lg mb-8">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-lg text-center">
-              <p className="text-gray-400 mb-4">Want unlimited access? Sign up now!</p>
-              <div className="flex flex-wrap justify-center gap-4">
+          <div className="w-full max-w-lg mb-6 sm:mb-8">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-lg text-center">
+              <p className="text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base">Want unlimited access? Sign up now!</p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <Link
                   href="/auth/signup"
-                  className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg font-medium transition"
+                  className="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base"
                 >
                   <span>Start Free</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/pricing"
-                  className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition"
+                  className="bg-gray-700 hover:bg-gray-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base"
                 >
                   View Plans
                 </Link>
@@ -172,16 +172,16 @@ export default function HomePage() {
 
         {/* Try section - no box */}
         {!user && (
-          <div className="w-full max-w-md mb-8">
+          <div className="w-full max-w-md mb-6 sm:mb-8">
             <div className="text-center mb-4">
-              <h2 className="text-lg font-semibold text-white mb-2">🚀 Try MiniMind Free</h2>
-              <p className="text-gray-400 text-sm">Ask any question and get kid-friendly explanations instantly!</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-white mb-2">🚀 Try MiniMind Free</h2>
+              <p className="text-gray-400 text-sm sm:text-base px-2">Ask any question and get kid-friendly explanations instantly!</p>
             </div>
 
             <div className="space-y-3">
               <input
                 type="text"
-                className="w-full p-3 rounded-lg border border-gray-600 bg-gray-700 text-white other-font focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full p-3 rounded-lg border border-gray-600 bg-gray-700 text-white other-font focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:text-base"
                 placeholder="Ask anything... (e.g., What is a black hole?)"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
@@ -190,14 +190,14 @@ export default function HomePage() {
               {loading ? (
                 <div className="flex justify-center other-font items-center gap-1 py-3 font-sans text-white">
                   <span className="text-sm">{thinkingMsg}</span>
-                  <span className="text-2xl gap-2 animate-bounce delay-[0ms]">.</span>
-                  <span className="text-2xl gap-2 animate-bounce delay-[150ms]">.</span>
-                  <span className="text-2xl gap-2 animate-bounce delay-[300ms]">.</span>
+                  <span className="text-xl sm:text-2xl gap-2 animate-bounce delay-[0ms]">.</span>
+                  <span className="text-xl sm:text-2xl gap-2 animate-bounce delay-[150ms]">.</span>
+                  <span className="text-xl sm:text-2xl gap-2 animate-bounce delay-[300ms]">.</span>
                 </div>
               ) : (
                 <button
                   onClick={handleExplain}
-                  className="w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white other-font hover:cursor-pointer font-medium transition duration-300 flex items-center justify-center"
+                  className="w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white other-font hover:cursor-pointer font-medium transition duration-300 flex items-center justify-center text-sm sm:text-base"
                 >
                   Explain it ✨
                 </button>
