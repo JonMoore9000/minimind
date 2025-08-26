@@ -85,13 +85,20 @@ export async function POST(req: NextRequest) {
           .update({ plan })
           .eq('user_id', profile.user_id)
 
+        // Update subscription with safe type casting
+        const stripeSubscription = subscription as any
+        const updateData: any = {
+          plan,
+          status: subscription.status,
+        }
+
+        if (stripeSubscription.current_period_end) {
+          updateData.current_period_end = new Date(stripeSubscription.current_period_end * 1000).toISOString()
+        }
+
         await supabase
           .from('subscriptions')
-          .update({
-            plan,
-            status: subscription.status,
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-          })
+          .update(updateData)
           .eq('stripe_subscription_id', subscription.id)
 
         break
@@ -135,12 +142,19 @@ export async function POST(req: NextRequest) {
         const subscriptionId = invoice.subscription as string
 
         if (subscriptionId) {
+          // Update subscription with safe type casting
+          const stripeInvoice = invoice as any
+          const updateData: any = {
+            status: 'active',
+          }
+
+          if (stripeInvoice.period_end) {
+            updateData.current_period_end = new Date(stripeInvoice.period_end * 1000).toISOString()
+          }
+
           await supabase
             .from('subscriptions')
-            .update({
-              status: 'active',
-              current_period_end: new Date(invoice.period_end * 1000).toISOString(),
-            })
+            .update(updateData)
             .eq('stripe_subscription_id', subscriptionId)
         }
 

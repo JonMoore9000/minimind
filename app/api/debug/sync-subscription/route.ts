@@ -56,9 +56,10 @@ export async function POST() {
         status: 'active',
       }
 
-      // Add current_period_end if it exists
-      if (subscription.current_period_end) {
-        subscriptionData.current_period_end = new Date(subscription.current_period_end * 1000).toISOString()
+      // Add current_period_end if it exists (cast to any to handle Stripe type variations)
+      const stripeSubscription = subscription as any
+      if (stripeSubscription.current_period_end) {
+        subscriptionData.current_period_end = new Date(stripeSubscription.current_period_end * 1000).toISOString()
       }
 
       await supabase
