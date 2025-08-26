@@ -33,7 +33,7 @@ export async function POST() {
 
     if (subscriptions.data.length > 0) {
       const subscription = subscriptions.data[0]
-      
+
       // Update profile to Plus
       await supabase
         .from('profiles')
@@ -41,16 +41,29 @@ export async function POST() {
         .eq('user_id', user.id)
 
       // Update or create subscription record
+      const subscriptionData: {
+        user_id: string;
+        stripe_customer_id: string;
+        stripe_subscription_id: string;
+        plan: string;
+        status: string;
+        current_period_end?: string;
+      } = {
+        user_id: user.id,
+        stripe_customer_id: profile.stripe_customer_id,
+        stripe_subscription_id: subscription.id,
+        plan: 'plus',
+        status: 'active',
+      }
+
+      // Add current_period_end if it exists
+      if (subscription.current_period_end) {
+        subscriptionData.current_period_end = new Date(subscription.current_period_end * 1000).toISOString()
+      }
+
       await supabase
         .from('subscriptions')
-        .upsert({
-          user_id: user.id,
-          stripe_customer_id: profile.stripe_customer_id,
-          stripe_subscription_id: subscription.id,
-          plan: 'plus',
-          status: 'active',
-          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        })
+        .upsert(subscriptionData)
 
       return NextResponse.json({ 
         success: true, 
