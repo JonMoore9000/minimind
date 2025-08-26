@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { comfortaa, flower, ibmMono } from './fonts';
+import { comfortaa, flower, ibmMono, fredoka, comingSoon, shadowsIntoLight } from './fonts';
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
@@ -14,15 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${comfortaa.variable} ${flower.variable} ${ibmMono.variable}`}>
-      <head>
-      <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet" />
-      <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet" />
-      <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet" />
+    <html lang="en" className={`${comfortaa.variable} ${flower.variable} ${ibmMono.variable} ${fredoka.variable} ${comingSoon.variable} ${shadowsIntoLight.variable}`}>
 
-
-
-      </head>
       <body
         
       >
