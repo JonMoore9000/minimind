@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
           .upsert({
             user_id: userId,
             stripe_customer_id: session.customer as string,
-            stripe_subscription_id: session.subscription as string,
+            stripe_subscription_id: (session as { subscription?: string }).subscription as string,
             plan: 'plus',
             status: 'active',
           })
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
 
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
+        const subscriptionId = (invoice as { subscription?: string }).subscription
 
         if (subscriptionId) {
           // Update subscription with safe type casting
@@ -170,7 +170,7 @@ export async function POST(req: NextRequest) {
 
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
+        const subscriptionId = (invoice as { subscription?: string }).subscription
 
         if (subscriptionId) {
           await supabase
