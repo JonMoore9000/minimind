@@ -56,8 +56,8 @@ export async function POST() {
         status: 'active',
       }
 
-      // Add current_period_end if it exists (cast to any to handle Stripe type variations)
-      const stripeSubscription = subscription as any
+      // Add current_period_end if it exists (safe property access)
+      const stripeSubscription = subscription as { current_period_end?: number }
       if (stripeSubscription.current_period_end) {
         subscriptionData.current_period_end = new Date(stripeSubscription.current_period_end * 1000).toISOString()
       }

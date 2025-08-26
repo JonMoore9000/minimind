@@ -86,8 +86,12 @@ export async function POST(req: NextRequest) {
           .eq('user_id', profile.user_id)
 
         // Update subscription with safe type casting
-        const stripeSubscription = subscription as any
-        const updateData: any = {
+        const stripeSubscription = subscription as { current_period_end?: number }
+        const updateData: {
+          plan: string;
+          status: string;
+          current_period_end?: string;
+        } = {
           plan,
           status: subscription.status,
         }
@@ -143,8 +147,11 @@ export async function POST(req: NextRequest) {
 
         if (subscriptionId) {
           // Update subscription with safe type casting
-          const stripeInvoice = invoice as any
-          const updateData: any = {
+          const stripeInvoice = invoice as { period_end?: number }
+          const updateData: {
+            status: string;
+            current_period_end?: string;
+          } = {
             status: 'active',
           }
 
