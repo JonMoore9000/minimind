@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -39,7 +40,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <img className="mx-auto h-12 w-auto" src="/mmlogo.png" alt="MiniMind" />
+          <Image className="mx-auto h-12 w-auto" src="/mmlogo.png" alt="MiniMind" width={48} height={48} />
           <h2 className="mt-6 text-3xl font-bold text-white">
             Sign in to MiniMind
           </h2>

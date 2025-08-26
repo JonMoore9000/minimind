@@ -30,7 +30,7 @@ export interface Database {
           user_id: string
           name: string
           age: number | null
-          favorites: Record<string, any>
+          favorites: Record<string, unknown>
           created_at: string
         }
         Insert: {
@@ -38,7 +38,7 @@ export interface Database {
           user_id: string
           name: string
           age?: number | null
-          favorites?: Record<string, any>
+          favorites?: Record<string, unknown>
           created_at?: string
         }
         Update: {
@@ -46,7 +46,7 @@ export interface Database {
           user_id?: string
           name?: string
           age?: number | null
-          favorites?: Record<string, any>
+          favorites?: Record<string, unknown>
           created_at?: string
         }
       }
@@ -58,7 +58,7 @@ export interface Database {
           title: string | null
           mode: string | null
           content: string | null
-          metadata: Record<string, any>
+          metadata: Record<string, unknown>
           created_at: string
         }
         Insert: {
@@ -68,7 +68,7 @@ export interface Database {
           title?: string | null
           mode?: string | null
           content?: string | null
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
         }
         Update: {
@@ -78,7 +78,7 @@ export interface Database {
           title?: string | null
           mode?: string | null
           content?: string | null
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
         }
       }
@@ -88,7 +88,7 @@ export interface Database {
           user_id: string
           child_id: string | null
           mode: string | null
-          messages: any[]
+          messages: unknown[]
           token_usage: number
           created_at: string
         }
@@ -97,7 +97,7 @@ export interface Database {
           user_id: string
           child_id?: string | null
           mode?: string | null
-          messages?: any[]
+          messages?: unknown[]
           token_usage?: number
           created_at?: string
         }
@@ -106,7 +106,7 @@ export interface Database {
           user_id?: string
           child_id?: string | null
           mode?: string | null
-          messages?: any[]
+          messages?: unknown[]
           token_usage?: number
           created_at?: string
         }

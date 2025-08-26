@@ -7,6 +7,7 @@ import { Heart, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HomePage() {
   const [topic, setTopic] = useState('');
@@ -23,7 +24,7 @@ export default function HomePage() {
       setUser(user);
     };
     getUser();
-  }, []);
+  }, [supabase.auth]);
 
 
   const handleExplain = async () => {
@@ -76,7 +77,7 @@ export default function HomePage() {
       <header className="bg-gray-800 border-b border-gray-700 p-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" />
+            <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
             <h1 className="text-xl font-bold">MiniMind</h1>
           </div>
 
@@ -114,7 +115,7 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
         <div className="header mb-8 flex flex-wrap align-center items-center justify-center">
-          <img className="logo h-16 w-auto" src="/mmlogo.png" alt="" />
+          <Image className="logo h-16 w-auto" src="/mmlogo.png" alt="MiniMind Logo" width={64} height={64} />
           <h1 className="other-font text-5xl font-bold ml-2 text-center">MiniMind</h1>
         </div>
 

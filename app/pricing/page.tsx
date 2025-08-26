@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const features = [
   {
@@ -78,7 +79,7 @@ export default function PricingPage() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <Link href="/" className="inline-flex items-center mb-8">
-            <img className="h-8 w-auto mr-2" src="/mmlogo.png" alt="MiniMind" />
+            <Image className="h-8 w-auto mr-2" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
             <span className="text-2xl font-bold text-white">MiniMind</span>
           </Link>
           <h1 className="text-4xl font-bold text-white mb-4">
@@ -167,7 +168,7 @@ export default function PricingPage() {
 
         <div className="text-center mt-12">
           <p className="text-gray-400 mb-4">
-            Questions? We're here to help.
+            Questions? We&apos;re here to help.
           </p>
           <Link href="/" className="text-indigo-400 hover:text-indigo-300">
             ← Back to MiniMind

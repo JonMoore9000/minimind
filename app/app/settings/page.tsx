@@ -11,7 +11,7 @@ interface ChildProfile {
   id: string
   name: string
   age: number | null
-  favorites: Record<string, any>
+  favorites: Record<string, unknown>
 }
 
 interface UsageData {
@@ -55,7 +55,7 @@ export default function SettingsPage() {
     }
 
     getUser()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUsage = async () => {
     try {
@@ -270,7 +270,7 @@ export default function SettingsPage() {
                   {Object.keys(child.favorites).length > 0 && (
                     <p className="text-sm text-gray-400 mt-1">
                       Favorites: {Object.entries(child.favorites)
-                        .filter(([_, value]) => value)
+                        .filter(([, value]) => value)
                         .map(([key, value]) => `${key}: ${value}`)
                         .join(', ')}
                     </p>

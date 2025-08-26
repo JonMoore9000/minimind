@@ -20,7 +20,7 @@ export async function GET() {
   }
 
   const missingVars = Object.entries(envVars)
-    .filter(([_, isSet]) => !isSet)
+    .filter(([, isSet]) => !isSet)
     .map(([name]) => name)
 
   return NextResponse.json({

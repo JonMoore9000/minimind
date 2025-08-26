@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { Plan, Profile, Subscription, UsageCounter } from '@/lib/types/database'
+import { Plan, Profile } from '@/lib/types/database'
 
 export interface PlanLimits {
   daily_chats: number

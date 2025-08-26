@@ -7,6 +7,7 @@ import { User } from '@supabase/supabase-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Settings, Crown, Sparkles, Moon, BookOpen, Star } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface UsageData {
   plan: 'free' | 'plus'
@@ -20,18 +21,32 @@ interface ChildProfile {
   id: string
   name: string
   age: number | null
-  favorites: Record<string, any>
+  favorites: Record<string, unknown>
 }
 
 export default function AppPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const [, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [usage, setUsage] = useState<UsageData | null>(null)
   const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([])
   const [selectedChild, setSelectedChild] = useState<string | null>(null)
   const [mode, setMode] = useState<'explain' | 'story' | 'bedtime' | 'learning'>('explain')
   const [input, setInput] = useState('')
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<{
+    kid?: string;
+    parent?: string;
+    fun?: string;
+    title?: string;
+    content?: string;
+    poem?: string;
+    sleepyMessage?: string;
+    activities?: string[];
+    facts?: string[];
+    answer?: string;
+    funFact?: string;
+    activity?: string;
+    nextQuestions?: string[];
+  } | null>(null)
   const [chatLoading, setChatLoading] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [couponCode, setCouponCode] = useState('')
@@ -54,7 +69,7 @@ export default function AppPage() {
     }
 
     getUser()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUsage = async () => {
     try {
@@ -91,7 +106,7 @@ export default function AppPage() {
 
     try {
       let endpoint = '/api/explain'
-      let payload: any = { topic: input }
+      let payload: Record<string, unknown> = { topic: input }
 
       if (mode === 'story') {
         endpoint = '/api/story'
@@ -189,7 +204,7 @@ export default function AppPage() {
       <header className="bg-gray-800 border-b border-gray-700 p-4">
         <div className="max-w-4xl px-6 mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" />
+            <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
             <h1 className="text-xl font-bold">MiniMind</h1>
             {usage?.plan === 'plus' && (
               <div className="flex items-center space-x-1 bg-indigo-600 px-2 py-1 rounded-full text-xs">
@@ -356,7 +371,7 @@ export default function AppPage() {
                   <h3 className="text-xl font-bold mb-4">{result.title}</h3>
                   <div className="prose prose-invert max-w-none">
                     <div className="text-gray-100 leading-relaxed">
-                      {result.content.split('\n').map((paragraph: string, index: number) => (
+                      {result.content?.split('\n').map((paragraph: string, index: number) => (
                         paragraph.trim() ? (
                           <p key={index} className="mb-4 last:mb-0">
                             {paragraph.trim()}
@@ -399,7 +414,7 @@ export default function AppPage() {
                   )}
                   {result.nextQuestions && (
                     <div className="bg-indigo-800 rounded-lg p-4">
-                      <h3 className="font-semibold mb-2">❓ What's Next:</h3>
+                      <h3 className="font-semibold mb-2">❓ What&apos;s Next:</h3>
                       <ul className="list-disc list-inside space-y-1">
                         {result.nextQuestions.map((q: string, i: number) => (
                           <li key={i}>{q}</li>
@@ -420,7 +435,7 @@ export default function AppPage() {
               <h3 className="text-xl font-bold mb-4">Upgrade to MiniMind Plus</h3>
               <p className="text-gray-300 mb-6">
                 {usage?.plan === 'free'
-                  ? "You've reached your daily limit. Upgrade to Plus for unlimited chats, personalized stories, bedtime mode, and more!"
+                  ? "You&apos;ve reached your daily limit. Upgrade to Plus for unlimited chats, personalized stories, bedtime mode, and more!"
                   : "This feature is only available with MiniMind Plus."
                 }
               </p>
