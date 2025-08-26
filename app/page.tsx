@@ -32,14 +32,42 @@ export default function HomePage() {
     setLoading(true);
     setResult(null);
 
-    const res = await fetch('/api/explain', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic }),
-    });
+    try {
+      const res = await fetch('/api/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic }),
+      });
 
-    const data = await res.json();
-    setResult(data);
+      const data = await res.json();
+
+      if (!res.ok) {
+        // Handle rate limit or other errors
+        if (res.status === 429) {
+          setResult({
+            kid: "Oops! You've tried a few questions already.",
+            parent: data.error || "Rate limit reached. Sign up for unlimited access!",
+            fun: "Sign up to ask unlimited questions and unlock bedtime stories, learning mode, and more! 🌟"
+          });
+        } else {
+          setResult({
+            kid: "Something went wrong, but don't worry!",
+            parent: "There was a technical issue. Please try again in a moment.",
+            fun: "While you wait, why not sign up to unlock all our amazing features? 🚀"
+          });
+        }
+      } else {
+        setResult(data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setResult({
+        kid: "Hmm, something's not working right now.",
+        parent: "There was a connection issue. Please check your internet and try again.",
+        fun: "Technology can be tricky sometimes! Sign up to get the best experience. 💫"
+      });
+    }
+
     setThinkingMsg(getRandomMessage());
     setLoading(false);
   };
@@ -114,35 +142,74 @@ export default function HomePage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
-        <div className="header mb-8 flex flex-wrap align-center items-center justify-center">
-          <Image className="logo h-16 w-auto" src="/mmlogo.png" alt="MiniMind Logo" width={64} height={64} />
-          <h1 className="other-font text-5xl font-bold ml-2 text-center">MiniMind</h1>
-        </div>
 
-        <p className="mb-8 other-font text-center text-xl text-gray-300">Big questions, little answers.</p>
-
+        {/* Signup buttons section - in a box */}
         {!user && (
-          <div className="mb-8 text-center">
-            <p className="text-gray-400 mb-4">Try it out below, or sign up for unlimited access!</p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                href="/auth/signup"
-                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg font-medium transition"
-              >
-                <span>Start Free</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/pricing"
-                className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition"
-              >
-                View Plans
-              </Link>
+          <div className="w-full max-w-lg mb-8">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-lg text-center">
+              <p className="text-gray-400 mb-4">Want unlimited access? Sign up now!</p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Link
+                  href="/auth/signup"
+                  className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg font-medium transition"
+                >
+                  <span>Start Free</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition"
+                >
+                  View Plans
+                </Link>
+              </div>
             </div>
           </div>
         )}
 
-        <div className="w-full max-w-md">
+        {/* Logo and branding - no box */}
+        
+
+        {/* Try section - no box */}
+        {!user && (
+          <div className="w-full max-w-md mb-8">
+            <div className="text-center mb-4">
+              <h2 className="text-lg font-semibold text-white mb-2">🚀 Try MiniMind Free</h2>
+              <p className="text-gray-400 text-sm">Ask any question and get kid-friendly explanations instantly!</p>
+            </div>
+
+            <div className="space-y-3">
+              <input
+                type="text"
+                className="w-full p-3 rounded-lg border border-gray-600 bg-gray-700 text-white other-font focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="Ask anything... (e.g., What is a black hole?)"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleExplain(); }}
+              />
+              {loading ? (
+                <div className="flex justify-center other-font items-center gap-1 py-3 font-sans text-white">
+                  <span className="text-sm">{thinkingMsg}</span>
+                  <span className="text-2xl gap-2 animate-bounce delay-[0ms]">.</span>
+                  <span className="text-2xl gap-2 animate-bounce delay-[150ms]">.</span>
+                  <span className="text-2xl gap-2 animate-bounce delay-[300ms]">.</span>
+                </div>
+              ) : (
+                <button
+                  onClick={handleExplain}
+                  className="w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white other-font hover:cursor-pointer font-medium transition duration-300 flex items-center justify-center"
+                >
+                  Explain it ✨
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+
+        {/* For authenticated users, show the input below */}
+        {user && (
+          <div className="w-full max-w-md">
         <input
           type="text"
           className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 text-white other-font focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
@@ -166,7 +233,8 @@ export default function HomePage() {
             Explain it
           </button>
         )}
-        </div>
+          </div>
+        )}
 
       <AnimatePresence>
         {result && (
@@ -205,6 +273,35 @@ export default function HomePage() {
               <div className="p-4 other-font rounded-lg bg-yellow-700">
                 <h2 className="">💡 Fun Thought:</h2>
                 <p>{result.fun}</p>
+              </div>
+            </motion.div>
+
+            {/* Call to Action */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+              className="text-center"
+            >
+              <div className="p-6 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 border border-indigo-500">
+                <h3 className="text-lg font-bold mb-2">🌟 Want More?</h3>
+                <p className="text-sm mb-4 text-gray-200">
+                  Get unlimited questions, bedtime stories, personalized learning, and more!
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <a
+                    href="/auth/signup"
+                    className="px-4 py-2 bg-white text-indigo-600 rounded-lg font-medium hover:bg-gray-100 transition"
+                  >
+                    Sign Up Free
+                  </a>
+                  <a
+                    href="/pricing"
+                    className="px-4 py-2 bg-indigo-700 text-white rounded-lg font-medium hover:bg-indigo-800 transition border border-indigo-500"
+                  >
+                    View Plans
+                  </a>
+                </div>
               </div>
             </motion.div>
           </motion.div>

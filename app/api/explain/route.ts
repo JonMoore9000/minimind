@@ -6,21 +6,53 @@ import { canUserChat, incrementDailyUsage } from '@/lib/subscription';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Simple in-memory rate limiting for unauthenticated users
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+
+function checkRateLimit(ip: string): { allowed: boolean; reason?: string } {
+  const now = Date.now()
+  const windowMs = 60 * 60 * 1000 // 1 hour
+  const maxRequests = 3 // 3 requests per hour for unauthenticated users
+
+  const current = rateLimitMap.get(ip)
+
+  if (!current || now > current.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs })
+    return { allowed: true }
+  }
+
+  if (current.count >= maxRequests) {
+    return {
+      allowed: false,
+      reason: 'Rate limit exceeded. Sign up for unlimited access!'
+    }
+  }
+
+  current.count++
+  return { allowed: true }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
 
-    // Get the authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Get the user (may be null for unauthenticated requests)
+    const { data: { user } } = await supabase.auth.getUser()
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Check if user can chat (usage limits)
-    const { allowed, reason } = await canUserChat(user.id)
-    if (!allowed) {
-      return NextResponse.json({ error: reason, limitReached: true }, { status: 429 })
+    // If user is authenticated, check usage limits
+    if (user) {
+      const { allowed, reason } = await canUserChat(user.id)
+      if (!allowed) {
+        return NextResponse.json({ error: reason, limitReached: true }, { status: 429 })
+      }
+    } else {
+      // For unauthenticated users, apply rate limiting
+      const forwarded = req.headers.get('x-forwarded-for')
+      const ip = forwarded ? forwarded.split(',')[0] : req.headers.get('x-real-ip') || 'unknown'
+      const { allowed, reason } = checkRateLimit(ip)
+      if (!allowed) {
+        return NextResponse.json({ error: reason, limitReached: true }, { status: 429 })
+      }
     }
 
     const { topic } = await req.json();
@@ -81,8 +113,10 @@ IMPORTANT: Return ONLY valid JSON in this exact format (no markdown, no extra te
         };
       }
 
-      // Increment usage counter after successful completion
-      await incrementDailyUsage(user.id)
+      // Increment usage counter after successful completion (only for authenticated users)
+      if (user) {
+        await incrementDailyUsage(user.id)
+      }
 
       return NextResponse.json(json);
     } catch (err) {
