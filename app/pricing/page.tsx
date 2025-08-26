@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 const features = [
   {
@@ -45,8 +47,26 @@ const features = [
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setIsAuthenticated(!!user)
+    }
+    checkAuth()
+  }, [supabase.auth])
 
   const handleUpgrade = async () => {
+    // Check if user is authenticated
+    if (isAuthenticated === false) {
+      // Redirect to signup with return URL
+      router.push(`/auth/signup?redirectTo=${encodeURIComponent('/pricing')}`)
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -56,6 +76,12 @@ export default function PricingPage() {
           'Content-Type': 'application/json',
         },
       })
+
+      if (response.status === 401) {
+        // User is not authenticated, redirect to login
+        router.push(`/auth/login?redirectTo=${encodeURIComponent('/pricing')}`)
+        return
+      }
 
       const { sessionId } = await response.json()
 
@@ -148,6 +174,8 @@ export default function PricingPage() {
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
                   <span>Creating checkout...</span>
                 </div>
+              ) : isAuthenticated === false ? (
+                'Sign Up & Upgrade to Plus'
               ) : (
                 'Upgrade to Plus'
               )}
