@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
     const supabase = await createClient()
     
@@ -13,6 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const { name, age, favorites } = await req.json();
+    const params = await context.params;
     const profileId = params.id;
 
     if (!name || name.trim() === '') {
@@ -48,7 +52,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
     const supabase = await createClient()
     
@@ -59,6 +66,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const params = await context.params;
     const profileId = params.id;
 
     // Delete child profile (RLS ensures user can only delete their own profiles)
