@@ -47,7 +47,7 @@ export default function PricingPage() {
 
   const handleUpgrade = async () => {
     setLoading(true)
-    
+
     try {
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
@@ -140,9 +140,16 @@ export default function PricingPage() {
             <button
               onClick={handleUpgrade}
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 mb-8 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 mb-8 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {loading ? 'Loading...' : 'Upgrade to Plus'}
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  <span>Creating checkout...</span>
+                </div>
+              ) : (
+                'Upgrade to Plus'
+              )}
             </button>
 
             <ul className="space-y-4">

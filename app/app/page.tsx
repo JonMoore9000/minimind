@@ -34,6 +34,8 @@ export default function AppPage() {
   const [result, setResult] = useState<any>(null)
   const [chatLoading, setChatLoading] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [couponCode, setCouponCode] = useState('')
+  const [upgradeLoading, setUpgradeLoading] = useState(false)
   
   const router = useRouter()
   const supabase = createClient()
@@ -144,6 +146,35 @@ export default function AppPage() {
     router.push('/')
   }
 
+  const handleUpgradeFromModal = async () => {
+    setUpgradeLoading(true)
+    try {
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          couponCode: couponCode.trim() || undefined
+        }),
+      })
+
+      const { sessionId } = await response.json()
+
+      if (sessionId) {
+        // Redirect to Stripe Checkout
+        const stripe = (await import('@stripe/stripe-js')).loadStripe(
+          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+        )
+        const stripeInstance = await stripe
+        await stripeInstance?.redirectToCheckout({ sessionId })
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error)
+      setUpgradeLoading(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -156,7 +187,7 @@ export default function AppPage() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700 p-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="max-w-4xl px-6 mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" />
             <h1 className="text-xl font-bold">MiniMind</h1>
@@ -176,12 +207,9 @@ export default function AppPage() {
                 </span>
               )}
             </div>
-            <button
-              onClick={() => router.push('/app/settings')}
-              className="p-2 hover:bg-gray-700 rounded-lg"
-            >
+            <Link href="/app/settings" className="p-2 hover:bg-gray-700 rounded-lg">
               <Settings className="h-5 w-5" />
-            </button>
+            </Link>
             <button
               onClick={handleSignOut}
               className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
@@ -283,9 +311,16 @@ export default function AppPage() {
             <button
               onClick={handleSubmit}
               disabled={chatLoading || !input.trim()}
-              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-medium transition"
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-medium transition flex items-center justify-center"
             >
-              {chatLoading ? 'Thinking...' : 'Send'}
+              {chatLoading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  <span>Thinking...</span>
+                </div>
+              ) : (
+                'Send'
+              )}
             </button>
           </div>
         </div>
@@ -384,21 +419,35 @@ export default function AppPage() {
             <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
               <h3 className="text-xl font-bold mb-4">Upgrade to MiniMind Plus</h3>
               <p className="text-gray-300 mb-6">
-                {usage?.plan === 'free' 
+                {usage?.plan === 'free'
                   ? "You've reached your daily limit. Upgrade to Plus for unlimited chats, personalized stories, bedtime mode, and more!"
                   : "This feature is only available with MiniMind Plus."
                 }
               </p>
+
               <div className="flex space-x-3">
                 <button
-                  onClick={() => router.push('/pricing')}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg font-medium"
+                  onClick={handleUpgradeFromModal}
+                  disabled={upgradeLoading}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-500 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center"
                 >
-                  Upgrade Now
+                  {upgradeLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      <span>Creating checkout...</span>
+                    </div>
+                  ) : (
+                    'Upgrade Now'
+                  )}
                 </button>
                 <button
-                  onClick={() => setShowUpgradeModal(false)}
-                  className="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded-lg font-medium"
+                  onClick={() => {
+                    setShowUpgradeModal(false)
+                    setCouponCode('')
+                    setUpgradeLoading(false)
+                  }}
+                  disabled={upgradeLoading}
+                  className="flex-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg font-medium"
                 >
                   Maybe Later
                 </button>

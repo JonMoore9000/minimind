@@ -21,10 +21,14 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServiceClient()
 
+    console.log('Webhook event received:', event.type, event.id)
+
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
         const userId = session.metadata?.supabase_user_id
+
+        console.log('Checkout completed for user:', userId, 'customer:', session.customer)
 
         if (!userId) {
           console.error('No user ID in session metadata')
@@ -32,15 +36,17 @@ export async function POST(req: NextRequest) {
         }
 
         // Update user profile and create subscription record
-        await supabase
+        const profileUpdate = await supabase
           .from('profiles')
-          .update({ 
+          .update({
             plan: 'plus',
             stripe_customer_id: session.customer as string
           })
           .eq('user_id', userId)
 
-        await supabase
+        console.log('Profile update result:', profileUpdate)
+
+        const subscriptionUpsert = await supabase
           .from('subscriptions')
           .upsert({
             user_id: userId,
@@ -49,6 +55,8 @@ export async function POST(req: NextRequest) {
             plan: 'plus',
             status: 'active',
           })
+
+        console.log('Subscription upsert result:', subscriptionUpsert)
 
         break
       }

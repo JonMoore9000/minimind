@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import Link from 'next/link';
 import { User } from '@supabase/supabase-js';
+import Link from 'next/link';
 
 export default function HomePage() {
   const [topic, setTopic] = useState('');
@@ -160,7 +160,7 @@ export default function HomePage() {
         ) : (
           <button
             onClick={handleExplain}
-            className="mt-4 w-full py-2 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-800 text-white other-font hover:cursor-pointer text-lg transition duration-300"
+            className="mt-4 w-full py-2 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-800 text-white other-font hover:cursor-pointer text-lg transition duration-300 flex items-center justify-center"
           >
             Explain it
           </button>
