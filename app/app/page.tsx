@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { User } from '@supabase/supabase-js'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Settings, Crown, Sparkles, Moon, BookOpen, Star } from 'lucide-react'
+import { Heart, Settings, Crown, Sparkles, Moon, BookOpen, Star, Library, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -202,56 +202,130 @@ export default function AppPage() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700 p-4">
-        <div className="max-w-4xl px-6 mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
-            <h1 className="text-xl font-bold">MiniMind</h1>
-            {usage?.plan === 'plus' && (
-              <div className="flex items-center space-x-1 bg-indigo-600 px-2 py-1 rounded-full text-xs">
-                <Crown className="h-3 w-3" />
-                <span>Plus</span>
+        <div className="max-w-4xl px-4 sm:px-6 mx-auto">
+          {/* Mobile: Two-row layout */}
+          <div className="sm:hidden">
+            {/* Top row - Logo and usage */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
+                <h1 className="text-xl font-bold">MiniMind</h1>
+                {usage?.plan === 'plus' && (
+                  <div className="flex items-center space-x-1 bg-indigo-600 px-2 py-1 rounded-full text-xs">
+                    <Crown className="h-3 w-3" />
+                    <span>Plus</span>
+                  </div>
+                )}
               </div>
-            )}
+
+              <div className="text-xs text-gray-400">
+                {usage && (
+                  <span>
+                    {usage.dailyUsage}/{usage.dailyLimit === 200 ? '∞' : usage.dailyLimit}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Bottom row - Navigation */}
+            <div className="flex items-center justify-end space-x-2">
+              {usage?.plan === 'plus' && (
+                <Link
+                  href="/app/stories"
+                  className="flex items-center space-x-1 text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1.5 rounded transition"
+                >
+                  <Library className="h-3 w-3" />
+                  <span>Stories</span>
+                </Link>
+              )}
+
+              <Link
+                href="/app/settings"
+                className="flex items-center space-x-1 text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1.5 rounded transition"
+              >
+                <Settings className="h-3 w-3" />
+                <span>Settings</span>
+              </Link>
+
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-1 text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1.5 rounded transition"
+              >
+                <LogOut className="h-3 w-3" />
+                <span>Out</span>
+              </button>
+            </div>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-400">
-              {usage && (
-                <span>
-                  {usage.dailyUsage}/{usage.dailyLimit === 200 ? '∞' : usage.dailyLimit} chats today
-                </span>
+
+          {/* Desktop: Single-row layout */}
+          <div className="hidden sm:flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
+              <h1 className="text-xl font-bold">MiniMind</h1>
+              {usage?.plan === 'plus' && (
+                <div className="flex items-center space-x-1 bg-indigo-600 px-2 py-1 rounded-full text-xs">
+                  <Crown className="h-3 w-3" />
+                  <span>Plus</span>
+                </div>
               )}
             </div>
-            <Link href="/app/settings" className="p-2 hover:bg-gray-700 rounded-lg">
-              <Settings className="h-5 w-5" />
-            </Link>
-            <button
-              onClick={handleSignOut}
-              className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
-            >
-              Sign Out
-            </button>
+
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-400">
+                {usage && (
+                  <span>
+                    {usage.dailyUsage}/{usage.dailyLimit === 200 ? '∞' : usage.dailyLimit} today
+                  </span>
+                )}
+              </div>
+
+              {usage?.plan === 'plus' && (
+                <Link
+                  href="/app/stories"
+                  className="flex items-center space-x-2 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+                >
+                  <Library className="h-4 w-4" />
+                  <span>My Stories</span>
+                </Link>
+              )}
+
+              <Link
+                href="/app/settings"
+                className="flex items-center space-x-2 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </Link>
+
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-2 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6">
         {/* Mode Selection */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-4 sm:mb-6">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
             <button
               onClick={() => setMode('explain')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
+              className={`flex items-center justify-center space-x-1.5 sm:space-x-2 px-3 py-2 sm:px-4 rounded-lg transition text-sm sm:text-base ${
                 mode === 'explain' ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'
               }`}
             >
               <BookOpen className="h-4 w-4" />
               <span>Ask & Learn</span>
             </button>
-            
+
             <button
               onClick={() => setMode('story')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
+              className={`flex items-center justify-center space-x-1.5 sm:space-x-2 px-3 py-2 sm:px-4 rounded-lg transition text-sm sm:text-base ${
                 mode === 'story' ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'
               }`}
             >
@@ -262,8 +336,8 @@ export default function AppPage() {
             <button
               onClick={() => setMode('bedtime')}
               disabled={usage?.plan !== 'plus'}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
-                mode === 'bedtime' ? 'bg-indigo-600' : 
+              className={`flex items-center justify-center space-x-1.5 sm:space-x-2 px-3 py-2 sm:px-4 rounded-lg transition text-sm sm:text-base ${
+                mode === 'bedtime' ? 'bg-indigo-600' :
                 usage?.plan !== 'plus' ? 'bg-gray-800 text-gray-500 cursor-not-allowed' :
                 'bg-gray-700 hover:bg-gray-600'
               }`}
@@ -272,12 +346,12 @@ export default function AppPage() {
               <span>Bedtime</span>
               {usage?.plan !== 'plus' && <Crown className="h-3 w-3" />}
             </button>
-            
+
             <button
               onClick={() => setMode('learning')}
               disabled={usage?.plan !== 'plus'}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
-                mode === 'learning' ? 'bg-indigo-600' : 
+              className={`flex items-center justify-center space-x-1.5 sm:space-x-2 px-3 py-2 sm:px-4 rounded-lg transition text-sm sm:text-base ${
+                mode === 'learning' ? 'bg-indigo-600' :
                 usage?.plan !== 'plus' ? 'bg-gray-800 text-gray-500 cursor-not-allowed' :
                 'bg-gray-700 hover:bg-gray-600'
               }`}
@@ -288,6 +362,29 @@ export default function AppPage() {
             </button>
           </div>
         </div>
+
+        {/* My Stories Section for Plus Users */}
+        {usage?.plan === 'plus' && (
+          <div className="mb-4 sm:mb-6">
+            <div className="bg-gray-800 rounded-lg p-3 sm:p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <Library className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-400" />
+                  <div>
+                    <h3 className="font-medium text-sm sm:text-base">My Stories</h3>
+                    <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Access your saved stories anytime</p>
+                  </div>
+                </div>
+                <Link
+                  href="/app/stories"
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition text-xs sm:text-sm"
+                >
+                  View All
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Child Selection */}
         {childProfiles.length > 0 && (mode === 'story' || mode === 'bedtime' || mode === 'learning') && (
@@ -308,7 +405,7 @@ export default function AppPage() {
         )}
 
         {/* Input */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <div className="flex space-x-2">
             <input
               type="text"
@@ -321,17 +418,17 @@ export default function AppPage() {
                 mode === 'bedtime' ? 'Create a bedtime story about...' :
                 'I want to learn about...'
               }
-              className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
             />
             <button
               onClick={handleSubmit}
               disabled={chatLoading || !input.trim()}
-              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed px-6 py-3 rounded-lg font-medium transition flex items-center justify-center"
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed px-4 py-2.5 sm:px-6 sm:py-3 rounded-lg font-medium transition flex items-center justify-center text-sm sm:text-base"
             >
               {chatLoading ? (
                 <div className="flex items-center space-x-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  <span>Thinking...</span>
+                  <span className="hidden sm:inline">Thinking...</span>
                 </div>
               ) : (
                 'Send'

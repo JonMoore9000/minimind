@@ -121,7 +121,7 @@ export default function PricingPage() {
           <div className="bg-gray-800 rounded-lg p-8 border border-gray-700">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-white mb-2">MiniMind Basic</h3>
-              <div className="text-4xl font-bold text-white mb-2">Free</div>
+              <div className="text-4xl font-semibold text-white mb-2">Free</div>
               <p className="text-gray-400">Perfect for trying out MiniMind</p>
             </div>
             
@@ -158,7 +158,7 @@ export default function PricingPage() {
             
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-white mb-2">MiniMind Plus</h3>
-              <div className="text-4xl font-bold text-white mb-2">
+              <div className="text-4xl font-semibold text-white mb-2">
                 $7<span className="text-lg text-gray-300">/month</span>
               </div>
               <p className="text-gray-300">Everything your family needs</p>

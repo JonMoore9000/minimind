@@ -75,7 +75,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700 p-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="max-w-4xl px-6 mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Image className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" width={32} height={32} />
             <h1 className="text-xl font-bold">MiniMind</h1>

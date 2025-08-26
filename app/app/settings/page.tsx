@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { User } from '@supabase/supabase-js'
-import { ArrowLeft, Crown, Plus, Trash2, Edit } from 'lucide-react'
+import { ArrowLeft, Crown, Plus, Trash2, Edit, Mail } from 'lucide-react'
 import Link from 'next/link'
 
 interface ChildProfile {
@@ -302,6 +302,21 @@ export default function SettingsPage() {
               </p>
             )}
           </div>
+        </div>
+
+        {/* Support */}
+        <div className="bg-gray-800 rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Need Help?</h2>
+          <p className="text-gray-300 mb-4">
+            Have questions or need assistance? We&apos;re here to help!
+          </p>
+          <a
+            href="mailto:jonmoore9000@gmail.com?subject=MiniMind Support Request"
+            className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium transition inline-flex"
+          >
+            <Mail className="h-4 w-4" />
+            <span>Contact Support</span>
+          </a>
         </div>
 
         {/* Add/Edit Child Modal */}
