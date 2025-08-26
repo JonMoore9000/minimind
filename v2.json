@@ -1,0 +1,384 @@
+{
+  "version": "1.0.0",
+  "app": {
+    "name": "MiniMind",
+    "domain": "https://minimind.fun",
+    "stack": {
+      "frontend": "Next.js + React + Tailwind",
+      "backend": "Next.js (API routes)",
+      "auth": "Supabase Auth",
+      "db": "Supabase Postgres + RLS",
+      "payments": "Stripe",
+      "ai": "OpenAI (server-side)",
+      "storage": "Supabase Storage (story audio/images if needed)"
+    }
+  },
+  "plans": [
+    {
+      "id": "free",
+      "label": "MiniMind Basic",
+      "price_monthly_cents": 0,
+      "features": [
+        "3-5 chats per day (configurable)",
+        "Basic Story Mode (no personalization)",
+        "General Q&A",
+        "No save history beyond daily session",
+        "Single child profile"
+      ],
+      "limits": {
+        "daily_chats": 5,
+        "max_child_profiles": 1,
+        "save_history_days": 0
+      }
+    },
+    {
+      "id": "plus",
+      "label": "MiniMind Plus",
+      "price_monthly_cents": 700,
+      "features": [
+        "Unlimited chats (with fair-use cap)",
+        "Custom Story Mode (child name, favorites)",
+        "Bedtime Mode (calm story + optional poem)",
+        "Learning Mode with grade-level answers",
+        "Save & Replay favorites",
+        "Parent Dashboard (daily/weekly recap)",
+        "Up to 5 child profiles"
+      ],
+      "limits": {
+        "daily_chats": 200,
+        "max_child_profiles": 5,
+        "save_history_days": 365
+      }
+    }
+  ],
+  "feature_flags": {
+    "bedtime_mode": { "free": false, "plus": true },
+    "learning_mode": { "free": false, "plus": true },
+    "save_and_replay": { "free": false, "plus": true },
+    "parent_dashboard": { "free": false, "plus": true },
+    "story_personalization": { "free": false, "plus": true }
+  },
+  "routes": {
+    "public": [
+      "/",
+      "/pricing",
+      "/privacy",
+      "/terms"
+    ],
+    "authed": [
+      "/app",
+      "/app/stories",
+      "/app/ask",
+      "/app/bedtime",
+      "/app/learning",
+      "/app/favorites",
+      "/app/settings"
+    ],
+    "api": [
+      "POST /api/chat",
+      "POST /api/story",
+      "POST /api/bedtime",
+      "POST /api/learning",
+      "POST /api/favorite",
+      "GET /api/usage",
+      "POST /api/stripe/create-portal-session",
+      "POST /api/stripe/create-checkout-session",
+      "POST /api/stripe/webhook"
+    ]
+  },
+  "limits": {
+    "free_daily_chats_default": 5,
+    "plus_daily_chats_soft_cap": 200,
+    "rate_limit_per_minute": 30
+  },
+  "stripe": {
+    "mode": "production_ready_with_test_keys",
+    "currency": "usd",
+    "products": [
+      {
+        "id": "prod_minimind_plus",
+        "name": "MiniMind Plus",
+        "description": "Unlimited chats, personalized stories, bedtime & learning modes, save & replay, parent dashboard.",
+        "prices": [
+          {
+            "id": "price_minimind_plus_monthly",
+            "type": "recurring",
+            "interval": "month",
+            "amount_cents": 700,
+            "trial_days": 0
+          }
+        ]
+      }
+    ],
+    "webhooks": {
+      "endpoint": "/api/stripe/webhook",
+      "events": [
+        "checkout.session.completed",
+        "customer.subscription.created",
+        "customer.subscription.updated",
+        "customer.subscription.deleted",
+        "invoice.payment_succeeded",
+        "invoice.payment_failed",
+        "customer.subscription.trial_will_end"
+      ],
+      "behavior": {
+        "on_checkout_completed": "link supabase user_id to stripe_customer_id and activate plus",
+        "on_subscription_active": "set plan=plus in user_subscriptions",
+        "on_subscription_past_due": "grace period 3 days then downgrade to free",
+        "on_subscription_canceled": "downgrade to free at period_end",
+        "on_payment_failed": "email user and set past_due"
+      }
+    },
+    "customer_portal": {
+      "enabled": true,
+      "allow_update_payment_method": true,
+      "allow_cancel": true
+    }
+  },
+  "supabase": {
+    "auth": {
+      "providers": ["email"],
+      "redirect_urls": {
+        "signin": "https://minimind.fun/auth/callback",
+        "signout": "https://minimind.fun"
+      }
+    },
+    "tables": [
+      {
+        "name": "profiles",
+        "pk": "user_id",
+        "columns": [
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "email", "type": "text", "not_null": true },
+          { "name": "stripe_customer_id", "type": "text" },
+          { "name": "plan", "type": "text", "default": "free" },
+          { "name": "created_at", "type": "timestamptz", "default": "now()" }
+        ],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()",
+          "UPDATE: user_id = auth.uid()"
+        ]
+      },
+      {
+        "name": "child_profiles",
+        "pk": "id",
+        "columns": [
+          { "name": "id", "type": "uuid", "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "name", "type": "text", "not_null": true },
+          { "name": "age", "type": "int4" },
+          { "name": "favorites", "type": "jsonb", "default": "{}" },
+          { "name": "created_at", "type": "timestamptz", "default": "now()" }
+        ],
+        "indexes": ["user_id"],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()",
+          "UPDATE: user_id = auth.uid()",
+          "DELETE: user_id = auth.uid()"
+        ]
+      },
+      {
+        "name": "stories",
+        "pk": "id",
+        "columns": [
+          { "name": "id", "type": "uuid", "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "child_id", "type": "uuid" },
+          { "name": "title", "type": "text" },
+          { "name": "mode", "type": "text" },
+          { "name": "content", "type": "text" },
+          { "name": "metadata", "type": "jsonb", "default": "{}" },
+          { "name": "created_at", "type": "timestamptz", "default": "now()" }
+        ],
+        "indexes": ["user_id", "child_id", "mode"],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()",
+          "UPDATE: user_id = auth.uid()",
+          "DELETE: user_id = auth.uid()"
+        ]
+      },
+      {
+        "name": "chat_sessions",
+        "pk": "id",
+        "columns": [
+          { "name": "id", "type": "uuid", "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "child_id", "type": "uuid" },
+          { "name": "mode", "type": "text" },
+          { "name": "messages", "type": "jsonb", "default": "[]" },
+          { "name": "token_usage", "type": "int4", "default": 0 },
+          { "name": "created_at", "type": "timestamptz", "default": "now()" }
+        ],
+        "indexes": ["user_id", "child_id", "mode"],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()"
+        ]
+      },
+      {
+        "name": "usage_counters",
+        "pk": "id",
+        "columns": [
+          { "name": "id", "type": "uuid", "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "date", "type": "date", "not_null": true },
+          { "name": "chat_count", "type": "int4", "default": 0 }
+        ],
+        "unique_constraints": ["user_id,date"],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()",
+          "UPDATE: user_id = auth.uid()"
+        ]
+      },
+      {
+        "name": "subscriptions",
+        "pk": "id",
+        "columns": [
+          { "name": "id", "type": "uuid", "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "stripe_customer_id", "type": "text" },
+          { "name": "stripe_subscription_id", "type": "text" },
+          { "name": "plan", "type": "text", "default": "free" },
+          { "name": "status", "type": "text", "default": "inactive" },
+          { "name": "current_period_end", "type": "timestamptz" }
+        ],
+        "indexes": ["user_id", "stripe_customer_id", "stripe_subscription_id"],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()",
+          "UPDATE: user_id = auth.uid()"
+        ]
+      },
+      {
+        "name": "settings",
+        "pk": "user_id",
+        "columns": [
+          { "name": "user_id", "type": "uuid", "not_null": true },
+          { "name": "free_daily_chats_override", "type": "int4" },
+          { "name": "plus_daily_chats_override", "type": "int4" },
+          { "name": "bedtime_voice", "type": "text" },
+          { "name": "language", "type": "text", "default": "en" }
+        ],
+        "rls": true,
+        "policies": [
+          "SELECT: user_id = auth.uid()",
+          "INSERT: user_id = auth.uid()",
+          "UPDATE: user_id = auth.uid()"
+        ]
+      }
+    ]
+  },
+  "logic": {
+    "plan_resolution": "Read from subscriptions.status and plan; fallback to profiles.plan if needed.",
+    "allow_chat": "Check plan, date-scoped usage_counters.chat_count against configured limits.",
+    "save_history": "If plan=plus, persist stories and chat_sessions; if free, ephemeral or prune nightly.",
+    "personalization": "Enabled for plus; uses child_profiles.favorites and name.",
+    "bedtime_mode": "Tone/length tuned; optional lullaby/poem appended.",
+    "learning_mode": "Age/grade parameter adjusts vocabulary and depth."
+  },
+  "ai_policies": {
+    "safety": [
+      "Kid-safe filtering on prompts/responses.",
+      "Disallow medical, violent, explicit topics.",
+      "Refuse and redirect to safe alternatives."
+    ],
+    "system_prompts": [
+      "Role: friendly educational companion for kids 3–10.",
+      "Concise, warm, age-appropriate language.",
+      "Encourage curiosity; no scary or unsafe suggestions."
+    ]
+  },
+  "env": [
+    { "key": "NEXT_PUBLIC_SUPABASE_URL", "required": true },
+    { "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY", "required": true },
+    { "key": "SUPABASE_SERVICE_ROLE_KEY", "required": true },
+    { "key": "STRIPE_SECRET_KEY", "required": true },
+    { "key": "STRIPE_WEBHOOK_SECRET", "required": true },
+    { "key": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "required": true },
+    { "key": "OPENAI_API_KEY", "required": true },
+    { "key": "APP_URL", "required": true }
+  ],
+  "ui": {
+    "pricing_table": {
+      "columns": ["Feature", "Free", "Plus ($7/mo)"],
+      "rows": [
+        ["Daily Chats", "5", "Unlimited (fair-use)"],
+        ["Custom Stories (Name, Favorites)", "—", "✓"],
+        ["Bedtime Mode", "—", "✓"],
+        ["Learning Mode (by age)", "—", "✓"],
+        ["Save & Replay", "—", "✓"],
+        ["Parent Dashboard", "—", "✓"],
+        ["Child Profiles", "1", "Up to 5"]
+      ],
+      "cta": {
+        "free": "Start Free",
+        "plus": "Upgrade to Plus"
+      }
+    },
+    "on_limit_reached": {
+      "title": "Daily limit reached",
+      "body": "MiniMind Plus gives you unlimited chats, personalized stories, bedtime mode, and more.",
+      "cta": "Upgrade for $7/mo"
+    }
+  },
+  "webhook_handlers": {
+    "checkout.session.completed": "Create or link Stripe customer to Supabase user; set plan=plus; insert into subscriptions with status=active.",
+    "customer.subscription.updated": "Sync plan and status; update current_period_end.",
+    "customer.subscription.deleted": "Set status=canceled; schedule downgrade at period end.",
+    "invoice.payment_succeeded": "Ensure status=active; extend current_period_end.",
+    "invoice.payment_failed": "Mark past_due and notify user."
+  },
+  "seed": {
+    "child_profiles": [
+      {
+        "name": "Sample Kid",
+        "age": 5,
+        "favorites": { "animal": "dinosaur", "color": "blue", "toy": "train" }
+      }
+    ],
+    "stories": [
+      {
+        "title": "The Blue Train to Dinoland",
+        "mode": "custom",
+        "content": "Once upon a time...",
+        "metadata": { "tone": "gentle", "length": "short" }
+      }
+    ]
+  },
+  "analytics_events": [
+    "auth_signed_up",
+    "auth_logged_in",
+    "chat_started",
+    "chat_completed",
+    "limit_reached_modal_view",
+    "upgrade_clicked",
+    "checkout_completed",
+    "subscription_active",
+    "subscription_canceled"
+  ],
+  "security": {
+    "rls_enabled": true,
+    "validate_user_ownership": true,
+    "server_side_ai_calls_only": true,
+    "rate_limiting": {
+      "per_ip_per_min": 60,
+      "per_user_per_min": 30
+    }
+  },
+  "roadmap": [
+    "Add audio narration for stories",
+    "Add Spanish language pack",
+    "Add weekly parent summary email",
+    "Add kid-safe image companion for stories"
+  ]
+}

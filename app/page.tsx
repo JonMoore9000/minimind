@@ -1,15 +1,29 @@
 // /app/page.tsx (main UI for MiniMind)
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import Link from 'next/link';
+import { User } from '@supabase/supabase-js';
 
 export default function HomePage() {
   const [topic, setTopic] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ kid: string; parent: string; fun: string } | null>(null);
   const [thinkingMsg, setThinkingMsg] = useState("Thinking");
+  const [user, setUser] = useState<User | null>(null);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, []);
 
 
   const handleExplain = async () => {
@@ -57,15 +71,77 @@ export default function HomePage() {
     thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
 
   return (
-    <main className="min-h-screen bg-gray-900 text-gray-900 text-white flex flex-col items-center justify-center px-4 py-10">
-      <div className="header mb-4 flex flex-wrap align-center items-center justify-center">
-      <img className="logo" src="../mmlogo.png" alt="" />
-      <h1 className="other-font text-4xl font-bold ml-1 text-center"> MiniMind</h1>
-      </div>
-      
-      <p className="mb-4 other-font text-center text-lg">Big questions, little answers.</p>
+    <main className="min-h-screen bg-gray-900 text-white flex flex-col">
+      {/* Header */}
+      <header className="bg-gray-800 border-b border-gray-700 p-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <img className="h-8 w-auto" src="/mmlogo.png" alt="MiniMind" />
+            <h1 className="text-xl font-bold">MiniMind</h1>
+          </div>
 
-      <div className="w-full max-w-md">
+          <div className="flex items-center space-x-4">
+            <Link href="/pricing" className="text-gray-300 hover:text-white transition">
+              Pricing
+            </Link>
+            {user ? (
+              <Link
+                href="/app"
+                className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium transition"
+              >
+                Go to App
+              </Link>
+            ) : (
+              <div className="flex space-x-2">
+                <Link
+                  href="/auth/login"
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-lg transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium transition"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+        <div className="header mb-8 flex flex-wrap align-center items-center justify-center">
+          <img className="logo h-16 w-auto" src="/mmlogo.png" alt="" />
+          <h1 className="other-font text-5xl font-bold ml-2 text-center">MiniMind</h1>
+        </div>
+
+        <p className="mb-8 other-font text-center text-xl text-gray-300">Big questions, little answers.</p>
+
+        {!user && (
+          <div className="mb-8 text-center">
+            <p className="text-gray-400 mb-4">Try it out below, or sign up for unlimited access!</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/auth/signup"
+                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg font-medium transition"
+              >
+                <span>Start Free</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/pricing"
+                className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition"
+              >
+                View Plans
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <div className="w-full max-w-md">
         <input
           type="text"
           className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 text-white other-font focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
@@ -89,8 +165,7 @@ export default function HomePage() {
             Explain it
           </button>
         )}
-        
-      </div>
+        </div>
 
       <AnimatePresence>
         {result && (
@@ -134,7 +209,11 @@ export default function HomePage() {
           </motion.div>
         )}
       </AnimatePresence>
-      <p className="jon">Built with <Heart size={20} className="mx-1 translate-y-0.5" /> by <a className="underline mx-1" href="https://x.com/JontheNerd_" target='_blank'> Jon</a></p>
+
+      <footer className="mt-16 text-center text-gray-400">
+        <p>Built with <Heart size={16} className="inline mx-1" /> by <a className="underline" href="https://x.com/JontheNerd_" target='_blank'>Jon</a></p>
+      </footer>
+      </div>
     </main>
   );
 }
