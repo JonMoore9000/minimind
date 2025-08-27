@@ -37,7 +37,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+    <div className="auth-form min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Image className="mx-auto h-12 w-auto" src="/mmlogo.png" alt="MiniMind" width={48} height={48} />

@@ -73,3 +73,17 @@ a:hover, button:hover {
   cursor: pointer;
 }
 
+.auth-form input {
+  font-size: 16px;
+}
+
+.auth-form button {
+  font-size: 18px;
+}
+
+@media(max-width: 980px) {
+  .home-plus {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

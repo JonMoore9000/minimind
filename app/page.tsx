@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ArrowRight } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
@@ -132,7 +132,7 @@ export default function HomePage() {
                   href="/auth/signup"
                   className="bg-indigo-600 hover:bg-indigo-700 px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base"
                 >
-                  Get Started
+                  Sign Up
                 </Link>
               </div>
             )}
@@ -141,26 +141,26 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10">
+      <div className="flex-1 flex flex-col items-center justify-flex-start px-4 py-5 sm:py-5">
 
         {/* Signup buttons section - in a box */}
         {!user && (
-          <div className="w-full max-w-lg mb-6 sm:mb-8">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-lg text-center">
-              <p className="text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base">Want unlimited access? Sign up now!</p>
-              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                <Link
+          <div className="home-plus w-full max-w-lg mb-6 sm:mb-8">
+            <div className="flex justify-between gap-4 bg-gray-800 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-lg text-center">
+              <p className="text-gray-400  text-sm sm:text-base">Want unlimited access and more features?</p>
+              <div className="">
+                {/*<Link
                   href="/auth/signup"
                   className="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base"
                 >
                   <span>Start Free</span>
                   <ArrowRight className="h-4 w-4" />
-                </Link>
+                </Link> */}
                 <Link
                   href="/pricing"
-                  className="bg-gray-700 hover:bg-gray-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base"
+                  className="bg-indigo-600 hover:bg-indigo-700 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base"
                 >
-                  View Plans
+                  Get Plus
                 </Link>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function HomePage() {
 
         {/* Try section - no box */}
         {!user && (
-          <div className="w-full max-w-md mb-6 sm:mb-8">
+          <div className="w-full max-w-lg mb-6 sm:mb-8">
             <div className="text-center mb-4">
               <h2 className="text-lg sm:text-xl font-semibold text-white mb-2">🚀 Try MiniMind Free</h2>
               <p className="text-gray-400 text-sm sm:text-base px-2">Ask any question and get kid-friendly explanations instantly!</p>
