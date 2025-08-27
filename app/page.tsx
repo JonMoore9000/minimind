@@ -145,8 +145,8 @@ export default function HomePage() {
 
         {/* Signup buttons section - in a box */}
         {!user && (
-          <div className="home-plus w-full max-w-lg mb-6 sm:mb-8">
-            <div className="flex justify-between gap-4 bg-gray-800 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-lg text-center">
+          <div className="w-full max-w-lg mb-6 sm:mb-8">
+            <div className="home-plus flex justify-between gap-4 bg-gray-800 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-lg text-center">
               <p className="text-gray-400  text-sm sm:text-base">Want unlimited access and more features?</p>
               <div className="">
                 {/*<Link
